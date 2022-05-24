@@ -19,6 +19,8 @@ CREATE TABLE poster(
     last_name VARCHAR(80),
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL
+    "location" VARCHAR(100),
+    about_me TEXT
 );
 
 CREATE TABLE comment(
