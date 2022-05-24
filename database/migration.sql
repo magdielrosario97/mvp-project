@@ -10,17 +10,17 @@ CREATE TABLE forum(
     post_id SERIAL PRIMARY KEY,
     time TIMESTAMP,
     title VARCHAR(60),
-    body TEXT
+    post TEXT
 );
 
 CREATE TABLE poster(
     poster_id SERIAL PRIMARY KEY,
-    first_name VARCHAR(60) NOT NULL,
-    last_name VARCHAR(80),
+    firstName VARCHAR(60) NOT NULL,
+    lastName VARCHAR(80),
     username VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL
-    "location" VARCHAR(100),
-    about_me TEXT
+    email VARCHAR(100) NOT NULL,
+    userLocation VARCHAR(100),
+    aboutMe TEXT
 );
 
 CREATE TABLE comment(

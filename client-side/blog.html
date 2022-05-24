@@ -25,7 +25,7 @@
         <h3>Blog</h3>
         <ul class="blogNav">
             <div>Create Post</div>
-                <input type="text" placeholder="Search..">
+                <input type="text" placeholder="Search.." required>
                 <select name="Search for">
                     <option value="user">Users</option>
                     <option value="post">Posts</option>
@@ -34,17 +34,18 @@
         </ul>
         <div class="postContainer"></div>
     </div>
-        <!-- <div class="createUser">
+        <div class="createUser">
             <form>
-            <input type="text" placeholder="First Name">
-            <input type="text" placeholder="Last Name">
-            <input type="text" placeholder="Username">
-            <input type="text" placeholder="Email">
+            <input type="text" placeholder="First Name" required>
+            <input type="text" placeholder="Last Name" required>
+            <input type="text" placeholder="Username" required>
+            <input type="text" placeholder="Email" required>
+            <input type="password" placeholder="Password">
             <input type="text" placeholder="Location">
             <label>About Me:</label>
             <textarea id="about-me"></textarea>
             </form>
-        </div> -->
+        </div>
     </div>
     <script src="blog.js"></script>
 </body>
