@@ -7,3 +7,5 @@ async function getForum() {
       console.error(error);
    }
 }
+
+getForum();
