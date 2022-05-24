@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const pool = require("./database/connection");
 
-app.use(express.static("client-side"));
+app.use(express.static("public"));
 app.use(express.json());
 
 // get the main blog page with all posts and comments
