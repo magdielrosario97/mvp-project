@@ -11,6 +11,10 @@ const openLoginRegister = () => {
    postContainer.style.display = "none";
 };
 
+const openCreatePost = () => {
+   createPostBox.style.display = "block";
+};
+
 // fetch requests
 async function getBlogPosts() {
    // local
@@ -19,7 +23,6 @@ async function getBlogPosts() {
    // deployed
    // const res = await fetch("http://");
    const blogData = await res.json();
-   console.log(blogData);
    createBlogForum(blogData);
 }
 
@@ -46,52 +49,88 @@ const createBlogForum = (blogData) => {
    }
 };
 
-const openCreatePost = () => {
+const populateCreatePost = () => {
    const postBoxContainer = document.createElement("form");
    const titleField = document.createElement("input");
-   titleField.setAttribute("type", "text");
+   titleField.setAttribute("id", "postTitle");
    titleField.setAttribute("placeholder", "Title");
    const userField = document.createElement("input");
-   userField.setAttribute("type", "text");
+   userField.setAttribute("id", "postUsername");
    userField.setAttribute("placeholder", "Username");
+   userField.setAttribute("required", "");
    const bodyField = document.createElement("textarea");
+   bodyField.setAttribute("id", "postBody");
    bodyField.setAttribute("placeholder", "Write your thoughts...");
+   bodyField.setAttribute("required", "");
+
    const submitPostBtn = document.createElement("input");
    submitPostBtn.setAttribute("type", "submit");
+   submitPostBtn.addEventListener("click", () => {
+      async function sendPostToDB() {
+         let usernameValue = document.getElementById("postUsername").value;
+         let titleValue = document.getElementById("postTitle").value;
+         let bodyValue = document.getElementById("postBody").value;
+
+         const newPost = {
+            username: usernameValue,
+            title: titleValue,
+            body: bodyValue,
+         };
+
+         await fetch("http://localhost:5222/blog", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPost),
+         });
+      }
+      sendPostToDB();
+   });
 
    postBoxContainer.append(titleField, userField, bodyField, submitPostBtn);
-   postContainer.prepend(postBoxContainer);
+
+   createPostBox.prepend(postBoxContainer);
 
    postBoxContainer.style.display = "block";
 };
+populateCreatePost();
 
-const createUser = () => {
-   const createUserContainer = document.createElement("form");
-   const firstNField = document.createElement("input");
-   firstNField.setAttribute("type", "text");
-   firstNField.setAttribute("placeholder", "First Name");
-   const lastNField = document.createElement("input");
-   lastNField.setAttribute("type", "text");
-   lastNField.setAttribute("placeholder", "Last Name");
-   const usernameField = document.createElement("input");
-   usernameField.setAttribute("type", "text");
-   usernameField.setAttribute("placeholder", "Username");
-   const emailField = document.createElement("input");
-   emailField.setAttribute("type", "text");
-   emailField.setAttribute("placeholder", "Email");
-   const userLocation = document.createElement("input");
-   userLocation.setAttribute("type", "text");
-   userLocation.setAttribute("placeholder", "City, State");
-   const aboutField = document.createElement("textarea");
-   aboutField.setAttribute("placeholder", "About you");
+// const createUser = () => {
+//    const createUserContainer = document.createElement("form");
+//    const firstNField = document.createElement("input");
+//    firstNField.setAttribute("placeholder", "First Name");
+//    const lastNField = document.createElement("input");
+//    lastNField.setAttribute("placeholder", "Last Name");
+//    const usernameField = document.createElement("input");
+//    usernameField.setAttribute("placeholder", "Username");
+//    const emailField = document.createElement("input");
+//    emailField.setAttribute("placeholder", "Email");
+//    const userLocation = document.createElement("input");
+//    userLocation.setAttribute("placeholder", "City, State");
+//    const aboutField = document.createElement("textarea");
+//    aboutField.setAttribute("placeholder", "About you");
 
-   const registerUserBtn = document.createElement("input");
-   const CancelRegBtn = document.createElement("button");
-};
+//    const registerUserBtn = document.createElement("input");
+//    registerUserBtn.setAttribute("type", "submit");
+//    const cancelRegBtn = document.createElement("button");
 
+//    createUserContainer.append(
+//       firstNField,
+//       lastNField,
+//       usernameField,
+//       emailField,
+//       userLocation,
+//       aboutField,
+//       registerUserBtn,
+//       cancelRegBtn
+//    );
+
+//    createUserDiv.append(createUserContainer);
+// };
+
+// createUser();
 //-------------------Event Listeners------------------------//
 createPostBtn.addEventListener("click", openCreatePost);
-loginRegBtn.addEventListener("click", openLoginRegister);
+// loginRegBtn.addEventListener("click", openLoginRegister);
 
 // async function getAllUsers() {
 //    const res = await fetch("http://localhost:5222/blog/user");

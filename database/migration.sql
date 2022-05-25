@@ -9,6 +9,7 @@ CREATE DATABASE f1_blog;
 CREATE TABLE forum(
     post_id SERIAL PRIMARY KEY,
     time TIMESTAMP,
+    username VARCHAR(70)
     title VARCHAR(60),
     post TEXT
 );

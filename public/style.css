@@ -56,3 +56,7 @@ body {
 .createUser {
     display: none
 }
+
+.createPostBox {
+    display: none
+}
