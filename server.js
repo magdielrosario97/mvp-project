@@ -2,9 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const pool = require("./database/connection");
+const cors = require("cors");
 
 app.use(express.static("public"));
 app.use(express.json());
+app.use(cors());
 
 // get the main blog page with all posts and comments
 app.get("/blog", async (req, res) => {

@@ -1,10 +1,10 @@
--- DROP DATABASE IF EXISTS f1_blog;
+DROP DATABASE IF EXISTS f1_blog;
 DROP TABLE IF EXISTS forum;
 DROP TABLE IF EXISTS poster;
 DROP TABLE IF EXISTS comment;
 
--- CREATE DATABASE f1_blog;
--- \c f1_blog
+CREATE DATABASE f1_blog;
+\c f1_blog
 
 CREATE TABLE forum(
     post_id SERIAL PRIMARY KEY,
@@ -36,4 +36,4 @@ ALTER TABLE poster ADD comment_id INTEGER REFERENCES comment(comment_id) ON DELE
 
 ALTER TABLE comment ADD post_id INTEGER REFERENCES forum(post_id) ON DELETE CASCADE;
 
-\i database/seed.sql
+\i seed.sql
