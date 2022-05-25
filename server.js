@@ -7,7 +7,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 // get the main blog page with all posts and comments
-app.get("/", async (req, res) => {
+app.get("/blog", async (req, res) => {
    try {
       const mainPage = await pool.query("SELECT * FROM forum");
       res.json(mainPage.rows);
@@ -17,7 +17,7 @@ app.get("/", async (req, res) => {
 });
 
 // gets all users -------------------------------------------------------
-app.get("/user", async (req, res) => {
+app.get("/blog/user", async (req, res) => {
    try {
       const usersPage = await pool.query("SELECT * FROM poster");
       res.json(usersPage.rows);
@@ -27,7 +27,7 @@ app.get("/user", async (req, res) => {
 });
 
 // gets specific user -------------------------------------------------------
-app.get("/user/:id", async (req, res) => {
+app.get("/blog/user/:id", async (req, res) => {
    try {
       const id = req.params.id;
       const userIdPage = await pool.query(
@@ -41,7 +41,7 @@ app.get("/user/:id", async (req, res) => {
 });
 
 // create post -------------------------------------------------------
-app.post("/", async (req, res) => {
+app.post("/blog", async (req, res) => {
    try {
       const body = req.body;
       const title = body.title || "Untitled";
@@ -57,7 +57,7 @@ app.post("/", async (req, res) => {
 });
 
 // create user -------------------------------------------------------
-app.post("/user", async (req, res) => {
+app.post("/blog/user", async (req, res) => {
    try {
       const body = req.body;
       const firstN = body.firstName;
@@ -77,7 +77,7 @@ app.post("/user", async (req, res) => {
 });
 
 // update post -------------------------------------------------------
-app.patch("/:id", async (req, res) => {
+app.patch("/blog/:id", async (req, res) => {
    const id = req.params.id;
    try {
       const postData = await pool.query(
@@ -98,7 +98,7 @@ app.patch("/:id", async (req, res) => {
 });
 
 // update user -------------------------------------------------------
-app.patch("/user/:id", async (req, res) => {
+app.patch("/blog/user/:id", async (req, res) => {
    const id = req.params.id;
    try {
       const userData = await pool.query(
@@ -123,7 +123,7 @@ app.patch("/user/:id", async (req, res) => {
 });
 
 // delete post -------------------------------------------------------
-app.delete("/:id", async (req, res) => {
+app.delete("/blog/:id", async (req, res) => {
    try {
       const id = req.params.id;
       const deletePost = await pool.query(
@@ -137,7 +137,7 @@ app.delete("/:id", async (req, res) => {
 });
 
 // delete user ---------------------------------------------------------------
-app.delete("/user/:id", async (req, res) => {
+app.delete("/blog/user/:id", async (req, res) => {
    try {
       const id = req.params.id;
       const deleteUser = await pool.query(
