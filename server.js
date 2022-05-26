@@ -11,7 +11,9 @@ app.use(cors());
 // get the main blog page with all posts and comments
 app.get("/blog", async (req, res) => {
    try {
-      const mainPage = await pool.query("SELECT * FROM forum");
+      const mainPage = await pool.query(
+         "SELECT * FROM forum ORDER BY time DESC"
+      );
       res.json(mainPage.rows);
    } catch (err) {
       res.send(err.message);
