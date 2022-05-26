@@ -3,17 +3,6 @@ const postContainer = document.querySelector(".postContainer");
 const createUserDiv = document.querySelector(".createUser");
 const loginRegBtn = document.querySelector("#loginBtn");
 const createPostBtn = document.querySelector("#createPostBtn");
-const createPostBox = document.querySelector(".createPostBox");
-
-//------- Styling Manipulation -------//
-const openLoginRegister = () => {
-   createUserDiv.style.display = "block";
-   postContainer.style.display = "none";
-};
-
-const openCreatePost = () => {
-   createPostBox.style.display = "block";
-};
 
 // fetch requests
 async function getBlogPosts() {
@@ -54,18 +43,25 @@ const createBlogForum = (blogData) => {
       postBody.setAttribute("contentEditable", "false");
       postBody.textContent = `${blogData[i].post}`;
 
+      const btns = document.createElement("div");
+      btns.setAttribute("class", "editBtns");
+
       const submitEditBtn = document.createElement("button");
       submitEditBtn.setAttribute("id", "submitEditBtn");
       submitEditBtn.textContent = "Submit Edit";
 
-      postDiv.append(userAndPostTime, postTitle, postBody, submitEditBtn);
+      const deletePostBtn = document.createElement("button");
+      deletePostBtn.setAttribute("id", "deletePostBtn");
+      deletePostBtn.textContent = "Delete Post";
+
+      btns.append(submitEditBtn, deletePostBtn);
+
+      postDiv.append(userAndPostTime, postTitle, postBody, btns);
 
       // Event Listener to Edit and Submit Changes
       postDiv.addEventListener("click", (e) => {
          const clickedID = e.target.id;
          const clickedClass = e.target.className;
-         console.log(clickedID);
-         console.log(clickedClass);
 
          if (clickedID === "post-title" || clickedID === "post-body") {
             postTitle.setAttribute("contentEditable", "true");
@@ -74,8 +70,10 @@ const createBlogForum = (blogData) => {
             postBody.style.background = "darkgray";
 
             submitEditBtn.style.display = "block";
+            deletePostBtn.style.display = "block";
          }
 
+         // Edit POST
          async function sendEditedPost() {
             let editedTitle = document.getElementById("post-title").textContent;
             let editedBody = document.getElementById("post-body").textContent;
@@ -95,10 +93,25 @@ const createBlogForum = (blogData) => {
                body: JSON.stringify(editedPost),
             });
          }
+
+         // DELETE POST
+         async function deletePost() {
+            let delModal = document.getElementById("delete-confirmation");
+            delModal.style.display = "block";
+
+            // Local
+            await fetch(`http://localhost:5222/blog/${clickedClass}`, {
+               method: "DELETE",
+               headers: { "Content-Type": "application/json" },
+            });
+         }
+
          submitEditBtn.addEventListener("click", sendEditedPost);
+         deletePostBtn.addEventListener("click", deletePost);
 
          postDiv.addEventListener("mouseleave", (e) => {
             submitEditBtn.style.display = "none";
+            deletePostBtn.style.display = "none";
             postTitle.setAttribute("contentEditable", "false");
             postTitle.style.background = "none";
             postBody.setAttribute("contentEditable", "false");
@@ -111,28 +124,81 @@ const createBlogForum = (blogData) => {
 function createEditConfirmation() {
    let modalBox = document.createElement("div");
    modalBox.setAttribute("id", "edit-confirmation");
-   modalBox.textContent = "Your edit has successfully been submitted!";
+
+   let editModal = document.createElement("div");
+   editModal.setAttribute("class", "edit-confirm");
+
+   let modalHeader = document.createElement("div");
+   modalHeader.textContent = "Edit Confirmation";
+   modalHeader.setAttribute("id", "edit-modal-header");
+
+   let modalBody = document.createElement("div");
+   modalBody.textContent = "Your edit has successfully been submitted!";
+   modalBody.setAttribute("id", "edit-modal-body");
+
    let modalConfirmationBtn = document.createElement("button");
    modalConfirmationBtn.textContent = "OK";
-   modalBox.append(modalConfirmationBtn);
+
+   editModal.append(modalHeader, modalBody, modalConfirmationBtn);
+   modalBox.append(editModal);
+
    modalConfirmationBtn.addEventListener("click", () => {
       window.location.reload();
    });
 
    postContainer.prepend(modalBox);
 }
-
 createEditConfirmation();
 
+function createDelConfirmation() {
+   let deleteModal = document.createElement("div");
+   deleteModal.setAttribute("id", "delete-confirmation");
+
+   let delModContent = document.createElement("div");
+   delModContent.setAttribute("class", "delete-confirm");
+
+   let delModHeader = document.createElement("div");
+   delModHeader.textContent = "Delete Confirmation";
+   delModHeader.setAttribute("id", "del-modal-header");
+
+   let delModBody = document.createElement("div");
+   delModBody.textContent = "Your post has been successfully deleted!";
+   delModBody.setAttribute("id", "del-modal-body");
+
+   let delModBtn = document.createElement("button");
+   delModBtn.textContent = "OK";
+
+   delModContent.append(delModHeader, delModBody, delModBtn);
+   deleteModal.append(delModContent);
+
+   delModBtn.addEventListener("click", () => {
+      window.location.reload();
+   });
+
+   postContainer.prepend(deleteModal);
+}
+
+createDelConfirmation();
+
 const populateCreatePost = () => {
+   const createPostMod = document.createElement("div");
+   createPostMod.setAttribute("id", "create-post-mod");
+
+   const postModHeader = document.createElement("div");
+   postModHeader.setAttribute("id", "post-mod-header");
+   postModHeader.textContent = "Create Post";
+
    const postBoxContainer = document.createElement("form");
+
    const titleField = document.createElement("input");
    titleField.setAttribute("id", "postTitle");
    titleField.setAttribute("placeholder", "Title");
+
    const userField = document.createElement("input");
    userField.setAttribute("id", "postUsername");
    userField.setAttribute("placeholder", "Username");
    userField.setAttribute("required", "");
+
    const bodyField = document.createElement("textarea");
    bodyField.setAttribute("id", "postBody");
    bodyField.setAttribute("placeholder", "Write your thoughts...");
@@ -140,6 +206,29 @@ const populateCreatePost = () => {
 
    const submitPostBtn = document.createElement("input");
    submitPostBtn.setAttribute("type", "submit");
+
+   const cancelPostBtn = document.createElement("button");
+   cancelPostBtn.setAttribute("id", "cancel-btn");
+   cancelPostBtn.textContent = "Cancel";
+
+   postBoxContainer.append(
+      userField,
+      titleField,
+      bodyField,
+      submitPostBtn,
+      cancelPostBtn
+   );
+   createPostMod.append(postModHeader, postBoxContainer);
+   postContainer.prepend(createPostMod);
+
+   createPostBtn.addEventListener("click", () => {
+      createPostMod.style.display = "block";
+   });
+
+   cancelPostBtn.addEventListener("click", () => {
+      createPostMod.style.display = "none";
+   });
+
    submitPostBtn.addEventListener("click", () => {
       async function sendPostToDB() {
          let usernameValue = document.getElementById("postUsername").value;
@@ -166,12 +255,20 @@ const populateCreatePost = () => {
       }
       sendPostToDB();
    });
-
-   postBoxContainer.append(titleField, userField, bodyField, submitPostBtn);
-   createPostBox.prepend(postBoxContainer);
-   postBoxContainer.style.display = "block";
 };
 populateCreatePost();
+
+//-------------------Event Listeners------------------------//
+createPostBtn.addEventListener("click", () => {});
+
+// loginRegBtn.addEventListener("click", openLoginRegister);
+
+// async function getAllUsers() {
+//    const res = await fetch("http://localhost:5222/blog/user");
+//    const userData = await res.json();
+//    console.log(userData);
+//    return userData;
+// }
 
 // const createUser = () => {
 //    const createUserContainer = document.createElement("form");
@@ -207,15 +304,8 @@ populateCreatePost();
 // };
 
 // createUser();
-//-------------------Event Listeners------------------------//
-createPostBtn.addEventListener("click", openCreatePost);
-// loginRegBtn.addEventListener("click", openLoginRegister);
 
-// async function getAllUsers() {
-//    const res = await fetch("http://localhost:5222/blog/user");
-//    const userData = await res.json();
-//    console.log(userData);
-//    return userData;
-// }
-
-// Working out how to access the data from another function to create the blog forum page. START ON THIS FILE
+// const openLoginRegister = () => {
+//    createUserDiv.style.display = "block";
+//    postContainer.style.display = "none";
+// };
