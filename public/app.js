@@ -1,14 +1,15 @@
 const container = document.querySelector(".container");
 const postContainer = document.querySelector(".postContainer");
 const createPostBtn = document.querySelector("#createPostBtn");
+const randomPostBtn = document.querySelector("#getRandomPost");
+const returnToMain = document.querySelector("#returnToMain");
 
-// fetch requests
+let localURL = "http://localhost:5222";
+let deployedURL = "https://formula1-blog.herokuapp.com";
+
+// fetch all
 async function getBlogPosts() {
-   // local
-   // const res = await fetch("http://localhost:5222/blog");
-
-   // deployed
-   const res = await fetch("https://formula1-blog.herokuapp.com/blog");
+   const res = await fetch(`${deployedURL}/blog`);
 
    const blogData = await res.json();
    createBlogForum(blogData);
@@ -16,11 +17,41 @@ async function getBlogPosts() {
 
 getBlogPosts();
 
+randomPostBtn.addEventListener("click", () => {
+   const postAccess = document.querySelectorAll(".post");
+   const postCountArr = [];
+   for (let i = 0; i < postAccess.length; i++) {
+      const postIDNum = postAccess[i].id;
+      postAccess[i].style.display = "none";
+      postCountArr.push(postIDNum);
+   }
+   const randomNum = Math.floor(Math.random() * postCountArr.length);
+   const randomID = postCountArr[randomNum];
+   const showPost = postAccess[randomNum];
+   showPost.style.display = "block";
+
+   async function getSinglePost() {
+      const res = await fetch(`${deployedURL}/blog/${randomID}`);
+
+      const postData = await res.json();
+      createBlogForum(postData);
+   }
+   getSinglePost();
+});
+
+returnToMain.addEventListener("click", () => {
+   const postAccess = document.querySelectorAll(".post");
+   for (let i = 0; i < postAccess.length; i++) {
+      postAccess[i].style.display = "block";
+   }
+});
+
 //------------- DOM Manipulation Functions -------------------//
 const createBlogForum = (blogData) => {
    for (let i = 0; i < blogData.length; i++) {
       const postDiv = document.createElement("div");
       postDiv.setAttribute("class", "post");
+      postDiv.setAttribute("id", `${blogData[i]["post_id"]}`);
       postContainer.append(postDiv);
 
       let user = blogData[i].username;
@@ -28,21 +59,26 @@ const createBlogForum = (blogData) => {
       timePosted = `${timePosted.slice(0, 10)} • ${timePosted.slice(11, 19)}`;
       const userAndPostTime = document.createElement("div");
       userAndPostTime.textContent = `@${user} • ${timePosted}`;
+      userAndPostTime.setAttribute("id", "postInfo");
 
       const postTitle = document.createElement("h4");
       postTitle.setAttribute("id", "post-title");
-      postTitle.setAttribute("class", `${blogData[i]["post_id"]}`);
       postTitle.setAttribute("contentEditable", "false");
       postTitle.textContent = blogData[i].title;
 
       const postBody = document.createElement("p");
       postBody.setAttribute("id", "post-body");
-      postBody.setAttribute("class", `${blogData[i]["post_id"]}`);
       postBody.setAttribute("contentEditable", "false");
       postBody.textContent = `${blogData[i].post}`;
 
-      const btns = document.createElement("section");
-      btns.setAttribute("class", "editBtns");
+      const editLogo = document.createElement("button");
+      editLogo.setAttribute("class", "openEdit");
+      editLogo.setAttribute("id", `${blogData[i]["post_id"]}`);
+      editLogo.textContent = "•••";
+      userAndPostTime.append(editLogo);
+
+      const editBtnsDiv = document.createElement("div");
+      editBtnsDiv.setAttribute("class", "editBtns");
 
       const submitEditBtn = document.createElement("button");
       submitEditBtn.setAttribute("id", "submitEditBtn");
@@ -52,24 +88,32 @@ const createBlogForum = (blogData) => {
       deletePostBtn.setAttribute("id", "deletePostBtn");
       deletePostBtn.textContent = "Delete Post";
 
-      btns.append(submitEditBtn, deletePostBtn);
+      const cancelEditBtn = document.createElement("button");
+      cancelEditBtn.setAttribute("id", "cancelEditBtn");
+      cancelEditBtn.textContent = "Cancel";
 
-      postDiv.append(userAndPostTime, postTitle, postBody, btns);
+      editBtnsDiv.append(cancelEditBtn, deletePostBtn, submitEditBtn);
+
+      postDiv.append(userAndPostTime, postTitle, postBody, editBtnsDiv);
 
       // Event Listener to Edit and Submit Changes
-      postDiv.addEventListener("click", (e) => {
-         const clickedID = e.target.id;
-         const clickedClass = e.target.className;
+      editLogo.addEventListener("click", (e) => {
+         const postID = e.target.id;
 
-         if (clickedID === "post-title" || clickedID === "post-body") {
-            postTitle.setAttribute("contentEditable", "true");
-            postTitle.style.background = "darkgray";
-            postBody.setAttribute("contentEditable", "true");
-            postBody.style.background = "lightgray";
-
-            submitEditBtn.style.display = "block";
-            deletePostBtn.style.display = "block";
+         const postAccess = document.querySelectorAll(".post");
+         for (let i = 0; i < postAccess.length; i++) {
+            if (postAccess[i].id !== postID) {
+               postAccess[i].style.display = "none";
+            }
          }
+
+         postTitle.setAttribute("contentEditable", "true");
+         postBody.setAttribute("contentEditable", "true");
+         postTitle.style.backgroundColor = "darkgray";
+         postBody.style.backgroundColor = "gray";
+         submitEditBtn.style.display = "block";
+         deletePostBtn.style.display = "block";
+         cancelEditBtn.style.display = "block";
 
          // Patch post
          async function sendEditedPost() {
@@ -79,20 +123,17 @@ const createBlogForum = (blogData) => {
             confirmModal.style.display = "block";
 
             const editedPost = {
-               post_id: clickedClass,
+               post_id: postID,
                title: editedTitle,
                post: editedBody,
             };
+            console.log(editedPost);
 
-            // Local
-            await fetch(
-               `https://formula1-blog.herokuapp.com/blog/${clickedClass}`,
-               {
-                  method: "PATCH",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(editedPost),
-               }
-            );
+            await fetch(`${deployedURL}/blog/${postID}`, {
+               method: "PATCH",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify(editedPost),
+            });
          }
 
          // DELETE POST
@@ -100,26 +141,26 @@ const createBlogForum = (blogData) => {
             let delModal = document.getElementById("delete-confirmation");
             delModal.style.display = "block";
 
-            // Local
-            await fetch(
-               `https://formula1-blog.herokuapp.com/blog/${clickedClass}`,
-               {
-                  method: "DELETE",
-                  headers: { "Content-Type": "application/json" },
-               }
-            );
+            await fetch(`${deployedURL}/blog/${postID}`, {
+               method: "DELETE",
+               headers: { "Content-Type": "application/json" },
+            });
          }
 
          submitEditBtn.addEventListener("click", sendEditedPost);
          deletePostBtn.addEventListener("click", deletePost);
-
-         postDiv.addEventListener("mouseleave", (e) => {
+         cancelEditBtn.addEventListener("click", () => {
+            postTitle.setAttribute("contentEditable", "false");
+            postBody.setAttribute("contentEditable", "false");
+            postTitle.style.backgroundColor = "transparent";
+            postBody.style.backgroundColor = "transparent";
             submitEditBtn.style.display = "none";
             deletePostBtn.style.display = "none";
-            postTitle.setAttribute("contentEditable", "false");
-            postTitle.style.background = "none";
-            postBody.setAttribute("contentEditable", "false");
-            postBody.style.background = "none";
+            cancelEditBtn.style.display = "none";
+            const postAccess = document.querySelectorAll(".post");
+            for (let i = 0; i < postAccess.length; i++) {
+               postAccess[i].style.display = "block";
+            }
          });
       });
    }
@@ -231,6 +272,7 @@ const populateCreatePost = () => {
 
    cancelPostBtn.addEventListener("click", () => {
       createPostMod.style.display = "none";
+      postBoxContainer.reset();
    });
 
    submitPostBtn.addEventListener("click", () => {
@@ -245,7 +287,7 @@ const populateCreatePost = () => {
             post: bodyValue,
          };
 
-         await fetch("https://formula1-blog.herokuapp.com/blog", {
+         await fetch(`${deployedURL}/blog`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPost),
@@ -255,54 +297,3 @@ const populateCreatePost = () => {
    });
 };
 populateCreatePost();
-
-//-------------------Event Listeners------------------------//
-
-// loginRegBtn.addEventListener("click", openLoginRegister);
-
-// async function getAllUsers() {
-//    const res = await fetch("http://localhost:5222/blog/user");
-//    const userData = await res.json();
-//    console.log(userData);
-//    return userData;
-// }
-
-// const createUser = () => {
-//    const createUserContainer = document.createElement("form");
-//    const firstNField = document.createElement("input");
-//    firstNField.setAttribute("placeholder", "First Name");
-//    const lastNField = document.createElement("input");
-//    lastNField.setAttribute("placeholder", "Last Name");
-//    const usernameField = document.createElement("input");
-//    usernameField.setAttribute("placeholder", "Username");
-//    const emailField = document.createElement("input");
-//    emailField.setAttribute("placeholder", "Email");
-//    const userLocation = document.createElement("input");
-//    userLocation.setAttribute("placeholder", "City, State");
-//    const aboutField = document.createElement("textarea");
-//    aboutField.setAttribute("placeholder", "About you");
-
-//    const registerUserBtn = document.createElement("input");
-//    registerUserBtn.setAttribute("type", "submit");
-//    const cancelRegBtn = document.createElement("button");
-
-//    createUserContainer.append(
-//       firstNField,
-//       lastNField,
-//       usernameField,
-//       emailField,
-//       userLocation,
-//       aboutField,
-//       registerUserBtn,
-//       cancelRegBtn
-//    );
-
-//    createUserDiv.append(createUserContainer);
-// };
-
-// createUser();
-
-// const openLoginRegister = () => {
-//    createUserDiv.style.display = "block";
-//    postContainer.style.display = "none";
-// };

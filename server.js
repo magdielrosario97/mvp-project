@@ -20,6 +20,20 @@ app.get("/blog", async (req, res) => {
    }
 });
 
+// get single post
+app.get("/blog/:id", async (req, res) => {
+   try {
+      const id = req.params.id;
+      const mainPage = await pool.query(
+         "SELECT * FROM forum WHERE post_id = $1",
+         [id]
+      );
+      res.json(mainPage.rows[0]);
+   } catch (err) {
+      res.send(err.message);
+   }
+});
+
 // gets all users -------------------------------------------------------
 app.get("/blog/user", async (req, res) => {
    try {

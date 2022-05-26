@@ -26,8 +26,6 @@ body {
     font-size: 50px;
 }
 
-
-
 .navBar {
     display: flex;
     flex-flow: row nowrap;
@@ -54,7 +52,10 @@ body {
     color: white
 }
 
-h3 {
+#blogTitle {
+    font-family: 'Racing Sans One';
+    letter-spacing: 2px;
+    text-shadow: -2px 1px 0px red;
     text-align: center;
     font-variant-caps: all-small-caps;
     font-size: 40px;
@@ -63,6 +64,7 @@ h3 {
 }
 
 .blogNav {
+    display: flex;
     background-color: white;
     text-align: center;
     padding: 0%;
@@ -71,14 +73,33 @@ h3 {
     margin-top: 0%;
     margin-bottom: 5%;
     cursor: pointer;
+    justify-content: space-evenly;
 }
 
 #createPostBtn {
-    width: -webkit-fill-available;
     text-align: center;
-    white-space: nowrap;
+    width: -webkit-fill-available;
+    font-size: 15px;
 }
 #createPostBtn:hover {
+    background-color: red;
+}
+
+#getRandomPost {
+    text-align: center;
+    width: -webkit-fill-available;
+    font-size: 15px;
+}
+#getRandomPost:hover {
+    background-color: red;
+}
+
+#returnToMain {
+    text-align: center;
+    width: -webkit-fill-available;
+    font-size: 15px;
+}
+#returnToMain:hover {
     background-color: red;
 }
 
@@ -180,49 +201,80 @@ h3 {
 
 .post {
     display: flex;
+    position: relative;
+	background: #ffffff;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 10px 10px 10px 10px;
     background-color: rgb(255, 255, 255);
     width: 80%;
     margin-bottom: 10px;
     -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 2.0s;
+    -webkit-animation-duration: 1.5s;
     animation-name: animatetop;
-    animation-duration: 2.0s
+    animation-duration: 1.5s;
+    box-shadow: -5px 4px 4px 2px;
 }
 
-.post > div {
+.post:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 65%;
+	width: 0;
+	height: 0;
+	border: 22px solid transparent;
+	border-right-color: #ffffff;
+	border-left: 0;
+	border-bottom: 0;
+	margin-top: -11px;
+	margin-left: -22px;
+}
+
+.post > #postInfo {
     background-color: red;
     border-radius: 7px 7px 0px 0px;
     padding-left: 1%;
+    padding-right: 1%;
 }
 
 #post-title {
     margin: 0%;
     padding-left: 1%;
+    padding-right: 1%;
 }
 
 #post-body {
     margin: 0%;
     padding-left: 1%;
+    padding-right: 1%;
 }
 
-.editBtns > button {
+.editBtns {
+    background-color: red;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.openEdit {
+    float: right;
+    background: none;
+    border: none;
+}
+
+#submitEditBtn, #deletePostBtn, #cancelEditBtn {
     display: none;
     font-size: 10px;
     float: right;
     background-color: red;
     border: solid red 1px;
-
 }
 
-.editBtns > button:hover {
+#submitEditBtn:hover, #deletePostBtn:hover, #cancelEditBtn:hover {
     background-color: darkred;
     cursor: pointer;
 }
 
-#submitEditBtn {
-    border-bottom-right-radius: 10px;
+#cancelEditBtn {
+    border-bottom-right-radius: 7px;
 }
 
 @-webkit-keyframes animatetop {
