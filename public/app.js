@@ -245,7 +245,7 @@ const populateCreatePost = () => {
             body: bodyValue,
          };
 
-         await fetch("https://formula1-blog.herokuapp.com//blog", {
+         await fetch("https://formula1-blog.herokuapp.com/blog", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPost),
