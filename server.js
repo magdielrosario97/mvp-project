@@ -46,11 +46,12 @@ app.get("/blog/user/:id", async (req, res) => {
 app.post("/blog", async (req, res) => {
    try {
       const body = req.body;
+      const username = body.username;
       const title = body.title || "Untitled";
       const postBody = body.post;
       const postMessage = await pool.query(
-         "INSERT INTO forum (time, title, post) VALUES (now(), $1, $2)",
-         [title, postBody]
+         "INSERT INTO forum (time, username, title, post) VALUES (now(), $1, $2, $3)",
+         [username, title, postBody]
       );
       res.json(postMessage.rows[0]);
    } catch (err) {

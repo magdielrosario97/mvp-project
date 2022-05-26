@@ -21,7 +21,8 @@ async function getBlogPosts() {
    const res = await fetch("http://localhost:5222/blog");
 
    // deployed
-   // const res = await fetch("http://");
+   // const res = await fetch("https://formula1-blog.herokuapp.com/blog");
+
    const blogData = await res.json();
    createBlogForum(blogData);
 }
@@ -35,19 +36,93 @@ const createBlogForum = (blogData) => {
       postDiv.setAttribute("class", "post");
       postContainer.append(postDiv);
 
+      let user = blogData[i].username;
+      let timePosted = blogData[i].time;
+      timePosted = `${timePosted.slice(0, 10)} • ${timePosted.slice(11, 19)}`;
+      const userAndPostTime = document.createElement("div");
+      userAndPostTime.textContent = `@${user} • ${timePosted}`;
+
       const postTitle = document.createElement("h4");
+      postTitle.setAttribute("id", "post-title");
+      postTitle.setAttribute("class", `${blogData[i]["post_id"]}`);
+      postTitle.setAttribute("contentEditable", "false");
       postTitle.textContent = blogData[i].title;
 
-      let timePosted = blogData[i].time;
-      timePosted = `${timePosted.slice(0, 10)} ${timePosted.slice(11, 19)}`;
-      const postTime = document.createElement("time");
-      postTime.textContent = `${timePosted}`;
-
       const postBody = document.createElement("p");
-      postBody.textContent = `@: ${blogData[i].post}`;
-      postDiv.append(postTitle, postTime, postBody);
+      postBody.setAttribute("id", "post-body");
+      postBody.setAttribute("class", `${blogData[i]["post_id"]}`);
+      postBody.setAttribute("contentEditable", "false");
+      postBody.textContent = `${blogData[i].post}`;
+
+      const submitEditBtn = document.createElement("button");
+      submitEditBtn.setAttribute("id", "submitEditBtn");
+      submitEditBtn.textContent = "Submit Edit";
+
+      postDiv.append(userAndPostTime, postTitle, postBody, submitEditBtn);
+
+      // Event Listener to Edit and Submit Changes
+      postDiv.addEventListener("click", (e) => {
+         const clickedID = e.target.id;
+         const clickedClass = e.target.className;
+         console.log(clickedID);
+         console.log(clickedClass);
+
+         if (clickedID === "post-title" || clickedID === "post-body") {
+            postTitle.setAttribute("contentEditable", "true");
+            postTitle.style.background = "darkgray";
+            postBody.setAttribute("contentEditable", "true");
+            postBody.style.background = "darkgray";
+
+            submitEditBtn.style.display = "block";
+         }
+
+         async function sendEditedPost() {
+            let editedTitle = document.getElementById("post-title").textContent;
+            let editedBody = document.getElementById("post-body").textContent;
+            let confirmModal = document.getElementById("edit-confirmation");
+            confirmModal.style.display = "block";
+
+            const editedPost = {
+               post_id: clickedClass,
+               title: editedTitle,
+               post: editedBody,
+            };
+
+            // Local
+            await fetch(`http://localhost:5222/blog/${clickedClass}`, {
+               method: "PATCH",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify(editedPost),
+            });
+         }
+         submitEditBtn.addEventListener("click", sendEditedPost);
+
+         postDiv.addEventListener("mouseleave", (e) => {
+            submitEditBtn.style.display = "none";
+            postTitle.setAttribute("contentEditable", "false");
+            postTitle.style.background = "none";
+            postBody.setAttribute("contentEditable", "false");
+            postBody.style.background = "none";
+         });
+      });
    }
 };
+
+function createEditConfirmation() {
+   let modalBox = document.createElement("div");
+   modalBox.setAttribute("id", "edit-confirmation");
+   modalBox.textContent = "Your edit has successfully been submitted!";
+   let modalConfirmationBtn = document.createElement("button");
+   modalConfirmationBtn.textContent = "OK";
+   modalBox.append(modalConfirmationBtn);
+   modalConfirmationBtn.addEventListener("click", () => {
+      window.location.reload();
+   });
+
+   postContainer.prepend(modalBox);
+}
+
+createEditConfirmation();
 
 const populateCreatePost = () => {
    const postBoxContainer = document.createElement("form");
@@ -76,20 +151,24 @@ const populateCreatePost = () => {
             title: titleValue,
             body: bodyValue,
          };
-
+         // Local
          await fetch("http://localhost:5222/blog", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPost),
          });
+         // Deployed
+         // await fetch("https://formula1-blog.herokuapp.com/blog", {
+         //    method: "POST",
+         //    headers: { "Content-Type": "application/json" },
+         //    body: JSON.stringify(newPost),
+         // });
       }
       sendPostToDB();
    });
 
    postBoxContainer.append(titleField, userField, bodyField, submitPostBtn);
-
    createPostBox.prepend(postBoxContainer);
-
    postBoxContainer.style.display = "block";
 };
 populateCreatePost();

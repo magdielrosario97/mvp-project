@@ -60,3 +60,11 @@ body {
 .createPostBox {
     display: none
 }
+
+#submitEditBtn {
+    display: none
+}
+
+#edit-confirmation {
+    display: none;
+}
