@@ -86,7 +86,7 @@ const createBlogForum = (blogData) => {
 
             // Local
             await fetch(
-               `https://formula1-blog.herokuapp.com//blog/${clickedClass}`,
+               `https://formula1-blog.herokuapp.com/blog/${clickedClass}`,
                {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
@@ -102,7 +102,7 @@ const createBlogForum = (blogData) => {
 
             // Local
             await fetch(
-               `https://formula1-blog.herokuapp.com//blog/${clickedClass}`,
+               `https://formula1-blog.herokuapp.com/blog/${clickedClass}`,
                {
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
