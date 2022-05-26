@@ -257,7 +257,6 @@ const populateCreatePost = () => {
 populateCreatePost();
 
 //-------------------Event Listeners------------------------//
-createPostBtn.addEventListener("click", () => {});
 
 // loginRegBtn.addEventListener("click", openLoginRegister);
 
