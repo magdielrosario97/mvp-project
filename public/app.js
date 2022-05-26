@@ -242,7 +242,7 @@ const populateCreatePost = () => {
          const newPost = {
             username: usernameValue,
             title: titleValue,
-            body: bodyValue,
+            post: bodyValue,
          };
 
          await fetch("https://formula1-blog.herokuapp.com/blog", {
