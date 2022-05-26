@@ -1,9 +1,9 @@
-DROP DATABASE IF EXISTS f1_blog;
+-- DROP DATABASE IF EXISTS f1_blog;
 DROP TABLE IF EXISTS forum;
 DROP TABLE IF EXISTS poster;
 
-CREATE DATABASE f1_blog;
-\c f1_blog
+-- CREATE DATABASE f1_blog;
+-- \c f1_blog
 
 CREATE TABLE forum(
     post_id SERIAL PRIMARY KEY,
