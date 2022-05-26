@@ -1,16 +1,14 @@
 const container = document.querySelector(".container");
 const postContainer = document.querySelector(".postContainer");
-const createUserDiv = document.querySelector(".createUser");
-const loginRegBtn = document.querySelector("#loginBtn");
 const createPostBtn = document.querySelector("#createPostBtn");
 
 // fetch requests
 async function getBlogPosts() {
    // local
-   const res = await fetch("http://localhost:5222/blog");
+   // const res = await fetch("http://localhost:5222/blog");
 
    // deployed
-   // const res = await fetch("https://formula1-blog.herokuapp.com/blog");
+   const res = await fetch("https://formula1-blog.herokuapp.com/blog");
 
    const blogData = await res.json();
    createBlogForum(blogData);
@@ -43,7 +41,7 @@ const createBlogForum = (blogData) => {
       postBody.setAttribute("contentEditable", "false");
       postBody.textContent = `${blogData[i].post}`;
 
-      const btns = document.createElement("div");
+      const btns = document.createElement("section");
       btns.setAttribute("class", "editBtns");
 
       const submitEditBtn = document.createElement("button");
@@ -67,13 +65,13 @@ const createBlogForum = (blogData) => {
             postTitle.setAttribute("contentEditable", "true");
             postTitle.style.background = "darkgray";
             postBody.setAttribute("contentEditable", "true");
-            postBody.style.background = "darkgray";
+            postBody.style.background = "lightgray";
 
             submitEditBtn.style.display = "block";
             deletePostBtn.style.display = "block";
          }
 
-         // Edit POST
+         // Patch post
          async function sendEditedPost() {
             let editedTitle = document.getElementById("post-title").textContent;
             let editedBody = document.getElementById("post-body").textContent;
@@ -87,11 +85,14 @@ const createBlogForum = (blogData) => {
             };
 
             // Local
-            await fetch(`http://localhost:5222/blog/${clickedClass}`, {
-               method: "PATCH",
-               headers: { "Content-Type": "application/json" },
-               body: JSON.stringify(editedPost),
-            });
+            await fetch(
+               `https://formula1-blog.herokuapp.com//blog/${clickedClass}`,
+               {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(editedPost),
+               }
+            );
          }
 
          // DELETE POST
@@ -100,10 +101,13 @@ const createBlogForum = (blogData) => {
             delModal.style.display = "block";
 
             // Local
-            await fetch(`http://localhost:5222/blog/${clickedClass}`, {
-               method: "DELETE",
-               headers: { "Content-Type": "application/json" },
-            });
+            await fetch(
+               `https://formula1-blog.herokuapp.com//blog/${clickedClass}`,
+               {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+               }
+            );
          }
 
          submitEditBtn.addEventListener("click", sendEditedPost);
@@ -133,7 +137,7 @@ function createEditConfirmation() {
    modalHeader.setAttribute("id", "edit-modal-header");
 
    let modalBody = document.createElement("div");
-   modalBody.textContent = "Your edit has successfully been submitted!";
+   modalBody.textContent = "Your edit has been successfully submitted!";
    modalBody.setAttribute("id", "edit-modal-body");
 
    let modalConfirmationBtn = document.createElement("button");
@@ -240,18 +244,12 @@ const populateCreatePost = () => {
             title: titleValue,
             body: bodyValue,
          };
-         // Local
-         await fetch("http://localhost:5222/blog", {
+
+         await fetch("https://formula1-blog.herokuapp.com//blog", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPost),
          });
-         // Deployed
-         // await fetch("https://formula1-blog.herokuapp.com/blog", {
-         //    method: "POST",
-         //    headers: { "Content-Type": "application/json" },
-         //    body: JSON.stringify(newPost),
-         // });
       }
       sendPostToDB();
    });

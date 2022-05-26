@@ -149,7 +149,11 @@ h3 {
     animation-duration: 0.4s
 }
 
-
+.postContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 #create-post-mod > div {
     background-color: white;
@@ -201,6 +205,24 @@ h3 {
 #post-body {
     margin: 0%;
     padding-left: 1%;
+}
+
+.editBtns > button {
+    display: none;
+    font-size: 10px;
+    float: right;
+    background-color: red;
+    border: solid red 1px;
+
+}
+
+.editBtns > button:hover {
+    background-color: darkred;
+    cursor: pointer;
+}
+
+#submitEditBtn {
+    border-bottom-right-radius: 10px;
 }
 
 @-webkit-keyframes animatetop {
