@@ -258,6 +258,7 @@ body {
     float: right;
     background: none;
     border: none;
+    cursor: url(edit-16.png) 2 10, auto
 }
 
 #submitEditBtn, #deletePostBtn, #cancelEditBtn {
