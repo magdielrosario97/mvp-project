@@ -7,4 +7,9 @@ VALUES
 
 INSERT INTO forum (time, username, title, post) 
 VALUES 
-    (now(), 'magdielrosario97', 'Lorem Ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent venenatis mi sed velit volutpat, pellentesque gravida enim imperdiet. Vivamus vitae scelerisque quam. Maecenas ac rhoncus sem.');
+    (now(), 
+    'magdielrosario97', 
+    'Welcome to my Formula 1 Blog Page', 
+    'Feel free to post anything you would like. This is currently the only 
+    functional page as I have to migrate all of the other pages. Please refrain from editing other users posts. 
+    I will be adding using user authentication in the near future to keep your posts safe.');

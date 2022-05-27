@@ -287,5 +287,40 @@ body {
     to {top:0; opacity:1}
 }
 
+footer {
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 99%;
+    height: 2.5rem;
+}
+
+footer > p {
+    text-align: center;
+    margin: 0%;
+    padding: 0%
+}
+
+footer > a {
+    color: black
+}
+
+::-webkit-scrollbar{
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: red; 
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b30000; 
+}
 
 
