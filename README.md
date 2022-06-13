@@ -2,7 +2,7 @@
 
 Welcome to my Project MVP Repo
 
-Here you will find my ability to create a single, full stack web application and deploy it using Heroku. 
+Here you will find my ability to create a single page full stack web application and deploy it using Heroku. 
 
 1. Front End Development
 • HTML
@@ -11,7 +11,6 @@ Here you will find my ability to create a single, full stack web application and
 • Fetch API
 
 2. Back End Development
-• Server Creation
 • Express.js
 • Node.js
 • PostgreSQL
